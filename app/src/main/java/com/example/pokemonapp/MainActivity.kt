@@ -1,46 +1,46 @@
-package com.example.pokemonapp
-
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.pokemonapp.ui.theme.PokemonAppTheme
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import com.example.pokeapp.R
+import com.example.pokemonapp.model.Pokemon
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+    private lateinit var textView: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            PokemonAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
+        setContentView(R.layout.activity_main)
+
+        textView = findViewById(R.id.textView)
+
+        // Tworzenie instancji Retrofit
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://pokeapi.co/api/v2/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val apiService = retrofit.create(PokemonApiService::class.java)
+
+        // Wykonanie żądania API
+        val call = apiService.getPokemon(1)
+        call.enqueue(object : Callback<Pokemon> {
+            override fun onResponse(call: Call<Pokemon>, response: Response<Pokemon>) {
+                if (response.isSuccessful) {
+                    val pokemon = response.body()
+                    if (pokemon != null) {
+                        textView.text = pokemon.name
+                    }
                 }
             }
-        }
-    }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PokemonAppTheme {
-        Greeting("Android")
+            override fun onFailure(call: Call<Pokemon>, t: Throwable) {
+                textView.text = "Error: ${t.message}"
+            }
+        })
     }
 }
