@@ -5,7 +5,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.pokemonapp.R;
 import com.example.pokemonapp.model.Pokemon;
 import java.util.List;
 
@@ -14,7 +13,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.PokemonV
     public interface OnItemClickListener {
         void onItemClick(Pokemon pokemon);
     }
-    private List<Pokemon> pokemonList;
+    private final List<Pokemon> pokemonList;
 
     public PokemonAdapter(List<Pokemon> pokemonList) {
         this.pokemonList = pokemonList;
