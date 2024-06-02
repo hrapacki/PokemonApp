@@ -1,22 +1,24 @@
 package com.example.pokemonapp;
+
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.pokemonapp.model.Pokemon;
 import java.util.List;
 
 public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.PokemonViewHolder> {
+    private List<Pokemon> pokemonList;
+    private Context context;
 
-    public interface OnItemClickListener {
-        void onItemClick(Pokemon pokemon);
-    }
-    private final List<Pokemon> pokemonList;
-
-    public PokemonAdapter(List<Pokemon> pokemonList) {
+    public PokemonAdapter(List<Pokemon> pokemonList, Context context) {
         this.pokemonList = pokemonList;
+        this.context = context;
     }
 
     @NonNull
@@ -29,7 +31,14 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.PokemonV
     @Override
     public void onBindViewHolder(@NonNull PokemonViewHolder holder, int position) {
         Pokemon pokemon = pokemonList.get(position);
-        holder.pokemonNameTextView.setText(pokemon.getName());
+        holder.nameTextView.setText(pokemon.getName());
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PokemonDetail.class);
+            intent.putExtra("name", pokemon.getName());
+            intent.putExtra("id", pokemon.getId());
+            intent.putExtra("weight", pokemon.getWeight());
+            context.startActivity(intent);
+        });
     }
 
     @Override
@@ -37,12 +46,12 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.PokemonV
         return pokemonList.size();
     }
 
-    public static class PokemonViewHolder extends RecyclerView.ViewHolder {
-        TextView pokemonNameTextView;
+    static class PokemonViewHolder extends RecyclerView.ViewHolder {
+        TextView nameTextView;
 
         public PokemonViewHolder(@NonNull View itemView) {
             super(itemView);
-            pokemonNameTextView = itemView.findViewById(R.id.pokemon_name);
+            nameTextView = itemView.findViewById(R.id.pokemon_name);
         }
     }
 }
