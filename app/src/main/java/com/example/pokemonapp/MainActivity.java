@@ -1,6 +1,7 @@
 package com.example.pokemonapp;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private PokemonAdapter adapter;
     private List<Pokemon> pokemonList = new ArrayList<>();
-    private static final int POKEMON_COUNT = 500;
+    private static final int POKEMON_COUNT = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(Call<Pokemon> call, Response<Pokemon> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         Pokemon pokemon = response.body();
+                        String imageUrl = pokemon.getImageUrl();
+                        Log.d("MainActivity", "Pokemon Image URL: " + imageUrl);
                         synchronized (pokemonList) {
                             pokemonList.add(pokemon);
                         }
